@@ -1,0 +1,5 @@
+#Binary Files
+*.o
+*.exe
+obj/*
+bin/*
