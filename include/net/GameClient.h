@@ -10,7 +10,7 @@ class GameClient
 		GameClient();
 		virtual ~GameClient();
 
-		int connect(std::string host , Uint8 port);
+		int connect(std::string host , Uint16 port);
 		void disconnect();
 	protected:
 	private:

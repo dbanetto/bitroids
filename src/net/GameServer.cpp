@@ -24,5 +24,20 @@ int GameServer::init(Uint16 port)
 
 void GameServer::host()
 {
-
+	UDPpacket* packet = nullptr;
+	if ( (packet = SDLNet_AllocPacket(512)) == NULL )
+	{
+		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed create server UPD packet %s" , SDL_GetError() );
+		return;
+	}
+	bool quit = false;
+	while (!quit)
+	{
+		if (SDLNet_UDP_Recv(this->server_sock, packet))
+		{
+			SDL_Log("UDP Packet Revived");
+			SDL_Log("DATA : %s" , (char*)(packet->data));
+			SDL_Log("From : %d:%d" , packet->address.host , packet->address.port );
+		}
+	}
 }

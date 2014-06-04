@@ -14,18 +14,17 @@ GameClient::~GameClient()
 }
 
 
-int GameClient::connect (std::string host , Uint8 port)
+int GameClient::connect (std::string host , Uint16 port)
 {
-	if (SDLNet_ResolveHost( &(this->server_addr) , host.c_str() , port ) != 0)
+	if ( (this->udpsock = SDLNet_UDP_Open(0)) == NULL)
 	{
-		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed to resolve %s:%d" , host.c_str() , port );
+		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed create client UPD socket %s" , SDL_GetError() );
 		return -1;
 	}
 
-	this->udpsock = SDLNet_UDP_Open(0);
-	if ( udpsock == NULL)
+	if (SDLNet_ResolveHost( &(this->server_addr) , host.c_str() , port ) != 0)
 	{
-		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed create client UPD socket %s" , SDL_GetError() );
+		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed to resolve %s:%d" , host.c_str() , port );
 		return -1;
 	}
 
@@ -36,7 +35,21 @@ int GameClient::connect (std::string host , Uint8 port)
 		return -1;
 	}
 
+
+	UDPpacket* packet;
+	packet = SDLNet_AllocPacket(512);
+	packet->data = (Uint8*)("Hello World");
+	packet->len = strlen((char *)packet->data) + 1;
+	packet->address.host = this->server_addr.host;
+	packet->address.port = this->server_addr.port;
+	if ( SDLNet_UDP_Send(this->udpsock , this->channel , packet ) == NULL )
+	{
+		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed to send UPD packet to %s:%d %s" , host.c_str() , port , SDL_GetError() );
+		return -1;
+	}
+	//SDLNet_FreePacket(packet);
 	this->connected = true;
+	SDL_Log("Connected to  %s:%d",  host.c_str() , port);
 	return 0;
 }
 
