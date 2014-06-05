@@ -5,12 +5,14 @@ GameClient::GameClient()
 {
 	this->channel = -1;
 	this->connected = false;
+	this->packet = nullptr;
 }
 
 GameClient::~GameClient()
 {
 	if (this->connected)
 		this->disconnect();
+	SDLNet_UDP_Close (this->udpsock);
 }
 
 
@@ -35,29 +37,85 @@ int GameClient::connect (std::string host , Uint16 port)
 		return -1;
 	}
 
-
-	UDPpacket* packet;
-	packet = SDLNet_AllocPacket(512);
-	packet->data = (Uint8*)("Hello World");
-	packet->len = strlen((char *)packet->data) + 1;
-	packet->address.host = this->server_addr.host;
-	packet->address.port = this->server_addr.port;
-	if ( SDLNet_UDP_Send(this->udpsock , this->channel , packet ) == NULL )
-	{
-		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed to send UPD packet to %s:%d %s" , host.c_str() , port , SDL_GetError() );
-		return -1;
-	}
-	//SDLNet_FreePacket(packet);
 	this->connected = true;
-	SDL_Log("Connected to  %s:%d",  host.c_str() , port);
+
+	SDL_Log("Started client socket on channel %d" , this->channel);
+	SDL_Log("Connected to  %s:%d (%d:%d)",  host.c_str() , port , this->server_addr.host, this->server_addr.port);
 	return 0;
 }
 
+/** \brief Disconnect from the current server
+ *	Can reconnect to another server
+ */
 void GameClient::disconnect()
 {
 	if (!this->connected)
 		return;
 
+	if (this->packet != nullptr)
+
+
 	SDLNet_UDP_Unbind (this->udpsock , this->channel);
-	SDLNet_UDP_Close (this->udpsock);
+	this->connected = false;
+}
+
+/** \brief Sends a message to the connected server
+ *
+ * \param message to be send
+ * \return -1 on failure see log output. Returns status of UDPpacket on success
+ */
+int GameClient::send (const char* msg)
+{
+	int len = strlen((char *)msg) + 1;
+	packet = SDLNet_AllocPacket(len);
+	//Delete the memory that was allocated for this packet, we do not need that, we got a parameter!
+	delete packet->data;
+
+	//Set up the packet data
+	packet->data = (Uint8*)(msg);
+	packet->len = len;
+	packet->address.host = this->server_addr.host;
+	packet->address.port = this->server_addr.port;
+
+	//Send the packet and check for an error
+	if ( SDLNet_UDP_Send(this->udpsock , this->channel , packet ) == 0 )
+	{
+		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed to send UPD packet to %d:%d %s" , packet->address.host , packet->address.port , SDL_GetError() );
+		return -1;
+	}
+	packet->data = nullptr; //Set to nullptr otherwise invalid pointer (pointing to a parameter)
+	int status = packet->status;
+	SDLNet_FreePacket(this->packet); //FREEDOM!
+
+	return status;
+}
+
+/** \brief
+ *
+ * \param
+ * \param
+ * \return
+ *
+ */
+int GameClient::recv (char** msg)
+{
+	UDPpacket packet;
+	packet.maxlen = 512;
+	packet.data = (Uint8*)(new char[packet.maxlen]);
+
+	int numrecv = SDLNet_UDP_Recv(udpsock, &packet);
+	if(numrecv == 1) {
+		*msg = (char*)(packet.data);
+		SDL_Log("Received (%d/%d) from %d:%d" , packet.len , packet.maxlen , packet.address );
+		return packet.len;
+	}
+	//No packets to received, give back the memory
+	delete packet.data;
+	if (numrecv == -1)
+	{
+		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed to receive UPD packet %s" , SDL_GetError() );
+		return -1;
+	}
+
+	return 0;
 }

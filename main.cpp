@@ -14,11 +14,6 @@ int main(int argc , char** args)
 	for (int i = 0;  i < argc; i++)
 	{
 		arg[i] = std::string(args[i]);
-		//for ( char* arg = args[i]; *arg != '\0' ; arg++ )
-		//{
-		//	arg[i].append(*arg);
-		//}
-		std::cout << arg[i] << std::endl;
 	}
 
 	if ( arg.size() > 1 && arg[1] == "--server")
@@ -29,6 +24,16 @@ int main(int argc , char** args)
 	} else {
 		GameClient gc;
 		gc.connect("localhost" , 6554);
+		gc.send( (arg.size() > 1 ? arg[1] : arg[0] ).c_str() );
+		SDL_Delay(100);
+		char* recv = nullptr;
+		if ( gc.recv(&recv) > 0 )
+		{
+			std::cout << recv << std::endl;
+			delete recv;
+		}
+
+
 		GameWindow gm;
 		gm.init();
 	}
