@@ -2,6 +2,7 @@
 #define GAMESERVER_H
 
 #include <SDL2/SDL_net.h>
+#include "GamePacket.h"
 
 class GameServer
 {

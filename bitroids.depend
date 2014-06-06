@@ -25,28 +25,30 @@
 
 1401877984 /home/drb/Documents/Projects/cpp/sdl2/bitroids/bitroids/include/net/GameServer.h
 
-1401914695 source:/home/drb/Documents/Projects/cpp/bitroids/src/GameWindow.cpp
+1401999937 source:/home/drb/Documents/Projects/cpp/bitroids/src/GameWindow.cpp
 	"GameWindow.h"
 	<SDL2/SDL.h>
 	<SDL2/SDL_net.h>
 
 1401914695 /home/drb/Documents/Projects/cpp/bitroids/include/GameWindow.h
 
-1401917586 source:/home/drb/Documents/Projects/cpp/bitroids/src/net/GameClient.cpp
+1402003801 source:/home/drb/Documents/Projects/cpp/bitroids/src/net/GameClient.cpp
 	"GameClient.h"
 	<SDL2/SDL.h>
+	"GamePacket.h"
 
-1401916398 /home/drb/Documents/Projects/cpp/bitroids/include/net/GameClient.h
+1401999937 /home/drb/Documents/Projects/cpp/bitroids/include/net/GameClient.h
 	<string>
 	<SDL2/SDL_net.h>
 
-1401916279 source:/home/drb/Documents/Projects/cpp/bitroids/src/net/GameServer.cpp
+1402001398 source:/home/drb/Documents/Projects/cpp/bitroids/src/net/GameServer.cpp
 	"GameServer.h"
 
-1401915977 /home/drb/Documents/Projects/cpp/bitroids/include/net/GameServer.h
+1402001161 /home/drb/Documents/Projects/cpp/bitroids/include/net/GameServer.h
 	<SDL2/SDL_net.h>
+	"GamePacket.h"
 
-1401917341 source:/home/drb/Documents/Projects/cpp/bitroids/main.cpp
+1401999937 source:/home/drb/Documents/Projects/cpp/bitroids/main.cpp
 	<SDL2/SDL.h>
 	"GameWindow.h"
 	<iostream>
@@ -84,4 +86,10 @@
 
 1401966762 source:/home/drb/Documents/Projects/cpp/sdl2/bitroids/src/net/GameServer.cpp
 	"GameServer.h"
+
+1402003199 /home/drb/Documents/Projects/cpp/bitroids/include/net/GamePacket.h
+	<SDL2/SDL_net.h>
+
+1402004789 source:/home/drb/Documents/Projects/cpp/bitroids/src/net/GamePacket.cpp
+	"GamePacket.h"
 

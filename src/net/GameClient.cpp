@@ -1,5 +1,6 @@
 #include "GameClient.h"
 #include <SDL2/SDL.h>
+#include "GamePacket.h"
 
 GameClient::GameClient()
 {
@@ -67,13 +68,10 @@ void GameClient::disconnect()
 int GameClient::send (const char* msg)
 {
 	int len = strlen((char *)msg) + 1;
-	packet = SDLNet_AllocPacket(len);
-	//Delete the memory that was allocated for this packet, we do not need that, we got a parameter!
-	delete packet->data;
+
+	buildpacket((Uint8*)(msg) , len , &packet);
 
 	//Set up the packet data
-	packet->data = (Uint8*)(msg);
-	packet->len = len;
 	packet->address.host = this->server_addr.host;
 	packet->address.port = this->server_addr.port;
 
@@ -83,7 +81,6 @@ int GameClient::send (const char* msg)
 		SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed to send UPD packet to %d:%d %s" , packet->address.host , packet->address.port , SDL_GetError() );
 		return -1;
 	}
-	packet->data = nullptr; //Set to nullptr otherwise invalid pointer (pointing to a parameter)
 	int status = packet->status;
 	SDLNet_FreePacket(this->packet); //FREEDOM!
 
