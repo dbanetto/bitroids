@@ -16,7 +16,8 @@ void Drawable::render(Time delta, SDL_Renderer* renderer)
 {
 	SDL_SetRenderDrawColor(renderer, 255,255,255,255);
 	SDL_RenderDrawLines(renderer , &(this->draw_points[0]), this->draw_points.size());
-	#if VISUAL_DEBUG
+
+	#ifdef VISUAL_DEBUG
 		SDL_RenderDrawRect(renderer, &(this->area));
 	#endif
 }
@@ -44,8 +45,7 @@ void Drawable::update_points(void)
 {
 	this->draw_points = translate(this->base_points, this->cor, this->rotation, this->position);
 	SDL_EnclosePoints(&(this->draw_points[0]), this->draw_points.size(), NULL , &(this->area));
-	this->area.x = this->position.x;
-	this->area.y = this->position.y;
+	
 }
 
 //Getters and Setters

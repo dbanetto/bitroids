@@ -26,7 +26,7 @@ Ship::Ship(SDL_Point pos, double rot)
 	this->cor.y = this->area.h / 2;
 
 	this->x = motion();
-	this->x.start_time = 0; this->x.gradient = -0.005; this->x.constant = pos.x;
+	this->x.start_time = 0; this->x.gradient = 0; this->x.constant = pos.x;
 	this->y = motion();
-	this->y.start_time = 0; this->y.gradient = -0.009; this->y.constant = pos.y;
+	this->y.start_time = 0; this->y.gradient = 0; this->y.constant = pos.y;
 }
