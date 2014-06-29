@@ -29,13 +29,13 @@ int main(int argc , char** args)
 		char* recv = nullptr;
 		if ( gc.recv(&recv) > 0 )
 		{
-			std::cout << recv << std::endl;
 			delete recv;
 		}
 
 
 		GameWindow gm;
 		gm.init();
+		gm.start();
 	}
 
     return 0;
