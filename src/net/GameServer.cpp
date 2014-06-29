@@ -1,4 +1,4 @@
-#include "GameServer.h"
+#include "net/GameServer.h"
 
 GameServer::GameServer()
 {
@@ -39,6 +39,10 @@ void GameServer::host()
 			SDL_Log("From : %d:%d" , packet->address.host , packet->address.port);
 			SDL_Log("Data (%d/%d) CRC16: %d", packet->len , packet->maxlen , checksumCRC16( packet->data , packet->len));
 
+			GamePacket pk = GamePacket();
+			unpackpacket(&packet, &pk);
+			SDL_Log("Packet Len:%d Type:%d Time:%d CRC:%d\n%s", pk.len , pk.type , pk.timestamp, pk.checksum , (char*)(pk.data));
+			delete pk.data;
 			if ( SDLNet_UDP_Send( this->server_sock , packet->channel, packet ) == 0 )
 			{
 				SDL_LogError( SDL_LOG_CATEGORY_APPLICATION , "Failed to send UPD packet to %d:%d %s" , packet->address.host , packet->address.port , SDL_GetError() );

@@ -5,17 +5,15 @@
 
 struct GamePacket {
 	Uint16 checksum; //Basic checksum
-	long unsigned int timestamp; // game time stamp
+	Uint32 timestamp; // game time stamp
 	Uint8 type;
-	unsigned int len; //Length of the data
+	Uint16 len; //Length of the data capped to 4 Kilobyes
+				//more than 512 becomes unrealiabe with UPD
 	Uint8* data;
 };
 
-int GamePacketToUDPpacket ( const GamePacket gpacket, UDPpacket* packet );
-int UDPpacketToGamePacket ( const UDPpacket packet, GamePacket* gpacket );
-
-int buildpacket ( Uint8* data , unsigned int len , UDPpacket** packet);
-
-Uint16 checksumCRC16 (Uint8* data , unsigned int len);
+int buildpacket ( Uint8* data , Uint16 len, Uint8 type , Uint32 timestamp , UDPpacket** packet);
+int unpackpacket(UDPpacket** packet , GamePacket* out);
+Uint16 checksumCRC16 (Uint8* data , Uint16 len);
 
 #endif // GAMEPACKET_H

@@ -1,6 +1,6 @@
-#include "GameClient.h"
+#include "net/GameClient.h"
 #include <SDL2/SDL.h>
-#include "GamePacket.h"
+#include "net/GamePacket.h"
 
 GameClient::GameClient()
 {
@@ -69,7 +69,7 @@ int GameClient::send (const char* msg)
 {
 	int len = strlen((char *)msg) + 1;
 
-	buildpacket((Uint8*)(msg) , len , &packet);
+	buildpacket((Uint8*)(msg) , len, 1, 0 , &packet);
 
 	//Set up the packet data
 	packet->address.host = this->server_addr.host;
