@@ -13,8 +13,14 @@ class GameClient
 		int connect(std::string host , Uint16 port);
 		void disconnect();
 
+		int start ();
+
 		int send (const char* msg);
-		int recv (char** msg);
+		int send (const char* msg, Uint8 type);
+		int send (const char* msg, Uint8 type, Uint16 length );
+		int recv (Uint8** msg);
+
+		Uint32 event_type;
 	protected:
 	private:
 		IPaddress server_addr;

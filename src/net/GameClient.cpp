@@ -2,21 +2,30 @@
 #include <SDL2/SDL.h>
 #include "net/GamePacket.h"
 
+#include <iostream>
+
 GameClient::GameClient()
 {
 	this->channel = -1;
 	this->connected = false;
 	this->packet = nullptr;
+	this->udpsock = nullptr;
+	event_type = SDL_RegisterEvents(1);
 }
 
 GameClient::~GameClient()
 {
 	if (this->connected)
 		this->disconnect();
-	SDLNet_UDP_Close (this->udpsock);
+	if (this->udpsock != nullptr)
+		SDLNet_UDP_Close (this->udpsock);
 }
 
-
+/**
+ * \brief Connect to server
+ * \param IP address or hostname
+ * \param Port number to connect to
+ */
 int GameClient::connect (std::string host , Uint16 port)
 {
 	if ( (this->udpsock = SDLNet_UDP_Open(0)) == NULL)
@@ -67,9 +76,19 @@ void GameClient::disconnect()
  */
 int GameClient::send (const char* msg)
 {
-	int len = strlen((char *)msg) + 1;
+	return this->send(msg , 255 , strlen((char *)msg) + 1 );
+}
 
-	buildpacket((Uint8*)(msg) , len, 1, 0 , &packet);
+int GameClient::send (const char* msg , Uint8 type)
+{
+	return this->send(msg , type , strlen((char *)msg) + 1 );
+}
+
+int GameClient::send (const char* msg , Uint8 type , Uint16 length )
+{
+	int len = length;
+
+	buildpacket((Uint8*)(msg) , len, type, 0 , &packet);
 
 	//Set up the packet data
 	packet->address.host = this->server_addr.host;
@@ -94,18 +113,19 @@ int GameClient::send (const char* msg)
  * \return
  *
  */
-int GameClient::recv (char** msg)
+int GameClient::recv (Uint8** msg)
 {
 	UDPpacket packet;
 	packet.maxlen = 512;
-	packet.data = (Uint8*)(new char[packet.maxlen]);
+	packet.data = new Uint8[packet.maxlen];
 
 	int numrecv = SDLNet_UDP_Recv(udpsock, &packet);
 	if(numrecv == 1) {
-		*msg = (char*)(packet.data);
+		*msg = (packet.data);
 		SDL_Log("Received (%d/%d) from %d:%d" , packet.len , packet.maxlen , packet.address );
 		return packet.len;
 	}
+
 	//No packets to received, give back the memory
 	delete packet.data;
 	if (numrecv == -1)
@@ -114,5 +134,29 @@ int GameClient::recv (char** msg)
 		return -1;
 	}
 
+	return 0;
+}
+
+int GameClient::start()
+{
+	while (this->connected)
+	{
+		Uint8* recv = nullptr;
+		if (this->recv(&recv) > 0 )
+		{
+			auto pk = new GamePacket();
+			unpackpacket(&recv, pk);
+
+			SDL_Event event;
+			SDL_zero(event);
+			event.type = this->event_type;
+			event.user.code = pk->type;
+			event.user.data1 = (void*)(pk);
+			event.user.data2 = 0;
+			SDL_PushEvent(&event);
+
+			delete recv;
+		}
+	}
 	return 0;
 }

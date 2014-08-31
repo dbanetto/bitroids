@@ -13,7 +13,7 @@ struct GamePacket {
 };
 
 int buildpacket ( Uint8* data , Uint16 len, Uint8 type , Uint32 timestamp , UDPpacket** packet);
-int unpackpacket(UDPpacket** packet , GamePacket* out);
+int unpackpacket(Uint8** packetdata , GamePacket* out);
 Uint16 checksumCRC16 (Uint8* data , Uint16 len);
 
 #endif // GAMEPACKET_H

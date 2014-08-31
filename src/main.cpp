@@ -22,16 +22,6 @@ int main(int argc , char** args)
 		gs.init(6554);
 		gs.host();
 	} else {
-		GameClient gc;
-		gc.connect("localhost" , 6554);
-		gc.send( (arg.size() > 1 ? arg[1] : arg[0] ).c_str() );
-		SDL_Delay(100);
-		char* recv = nullptr;
-		if ( gc.recv(&recv) > 0 )
-		{
-			delete recv;
-		}
-
 
 		GameWindow gm;
 		gm.init();

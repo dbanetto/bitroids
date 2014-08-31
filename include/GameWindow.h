@@ -3,6 +3,11 @@
 
 #include <SDL2/SDL.h>
 #include "timer.h"
+#include "net/GameClient.h"
+
+#include "graphics/Ship.h"
+#include "graphics/Bullet.h"
+#include <map>
 
 class GameWindow
 {
@@ -15,9 +20,18 @@ class GameWindow
 
 		void update(Time delta);
 		void render(Time delta, SDL_Renderer* renderer);
-		void event (SDL_Event& event);
+		void event (Time delta, SDL_Event& event);
 	protected:
 	private:
+		GameClient client;
+		Ship* player;
+
+		int bullet_id;
+		int ship_id;
+
+		std::map<int,Ship> ships;
+		std::map<int,Bullet> bullets;
+		SDL_Thread* client_thread;
 		SDL_Window* window;
 		SDL_Renderer* renderer;
 		bool quit;

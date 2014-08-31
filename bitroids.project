@@ -27,6 +27,7 @@
     <VirtualDirectory Name="graphics">
       <File Name="include/graphics/Drawable.h"/>
       <File Name="include/graphics/Ship.h"/>
+      <File Name="include/graphics/Bullet.h"/>
     </VirtualDirectory>
     <File Name="include/timer.h"/>
   </VirtualDirectory>
@@ -43,6 +44,7 @@
     <VirtualDirectory Name="graphics">
       <File Name="src/graphics/Drawable.cpp"/>
       <File Name="src/graphics/Ship.cpp"/>
+      <File Name="src/graphics/Bullet.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
