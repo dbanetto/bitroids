@@ -28,6 +28,8 @@
       <File Name="include/graphics/Drawable.h"/>
       <File Name="include/graphics/Ship.h"/>
       <File Name="include/graphics/Bullet.h"/>
+      <File Name="include/graphics/Asteroid.h"/>
+      <File Name="include/graphics/Asteroid.cpp"/>
     </VirtualDirectory>
     <File Name="include/timer.h"/>
   </VirtualDirectory>

@@ -35,5 +35,5 @@ Ship::Ship(SDL_Point pos, double rot, int id)
 
 Bullet Ship::fire(int id)
 {
-	return Bullet(this->position,this->getVel() + 10.0 , this->rotation, id);
+	return Bullet(this->position,this->getVel() + 500.0 , this->rotation, id);
 }

@@ -23,6 +23,7 @@ GameWindow::GameWindow()
 	this->player = nullptr;
 	this->bullet_id = 0;
 	this->ship_id = 0;
+	this->asteroid_id = 0;
 }
 
 GameWindow::~GameWindow()
@@ -125,6 +126,9 @@ void GameWindow::update(Time time)
 		bullet.second.update(time);
 	}
 
+	for(auto& aster : this->asteroids) {
+		aster.second.update(time);
+	}
 }
 
 void GameWindow::render(Time time, SDL_Renderer* renderer)
@@ -134,6 +138,10 @@ void GameWindow::render(Time time, SDL_Renderer* renderer)
 
 	for(auto& bullet : this->bullets) {
 		bullet.second.render(time, renderer);
+	}
+
+	for(auto& aster : this->asteroids) {
+		aster.second.render(time, renderer);
 	}
 }
 
@@ -160,9 +168,22 @@ void GameWindow::event(Time time, SDL_Event& e)
 			case(SDLK_ESCAPE):
 				this->quit = true;
 				break;
+			case(SDLK_p):
+				this->asteroids.insert(std::pair<int,Asteroid>(asteroid_id , Asteroid(player->getPos(), 0.0 , asteroid_id)));
+				asteroid_id++;
+				break;
+			case(SDLK_SPACE):
+				// FIXME : Limit the number of bullets that can be fired per ship
+				if(player != nullptr) {
+					this->bullets.insert(std::pair<int,Bullet>(bullet_id , player->fire(bullet_id)));
+					bullet_id++;
+					this->client.send("FIRE_MISSILE!");
+				}
+				break;
 		}
 	}
 
+	// Player controls
 	if(player != nullptr) {
 		const Uint8* keystates = SDL_GetKeyboardState(NULL);
 
@@ -177,12 +198,6 @@ void GameWindow::event(Time time, SDL_Event& e)
 		} else if(keystates[SDL_SCANCODE_D]) {
 			player->setRot(player->getRot() + (0.1/time.delta));
 		}
-
-		// FIXME : Limit the number of bullets that can be fired per ship
-		if(keystates[SDL_SCANCODE_SPACE]) {
-			this->bullets.insert(std::pair<int,Bullet>(bullet_id , player->fire(bullet_id)));
-			bullet_id++;
-		}
 	}
 
 	//Quit event
@@ -192,12 +207,12 @@ void GameWindow::event(Time time, SDL_Event& e)
 
 	// Network Events
 	if(e.type == this->client.event_type) {
-		auto packet = (GamePacket*)(e.user.data1);
-		SDL_Log("Revieced Packet type:%d" , packet->type);
+		GamePacket* packet = (GamePacket*)(e.user.data1);
+		SDL_Log("Revieced Packet type:%d crc:%d len:%d" , packet->type, packet->checksum , packet->len);
 
 		switch(packet->type) {
 			case 0x80:
-				this->client.send((char*)packet->data, 0x80 , packet->len);
+				//this->client.send((char*)packet->data, 0x80 , packet->len);
 				break;
 		}
 

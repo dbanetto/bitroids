@@ -49,11 +49,12 @@ void GameServer::host()
 
 			#ifdef DEBUG
 				std::cout << "Header Sent ";
-				for(Uint16 i = 0; i < 9; i++)
+				std::cout << std::hex << (int)((packet)->data[0]);
+				for(Uint16 i = 1; i < 9; i++)
 				{
-				std::cout << std::hex << (int)((packet)->data[i]) << "-";
+					std::cout << "-" << std::hex << (int)((packet)->data[i]);
 				}
-				std::cout << std::endl;
+				std::cout << std::dec << std::endl;
 			#endif
 		}
 	}

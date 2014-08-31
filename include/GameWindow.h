@@ -1,13 +1,14 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
+#include <map>
 #include <SDL2/SDL.h>
 #include "timer.h"
 #include "net/GameClient.h"
 
 #include "graphics/Ship.h"
 #include "graphics/Bullet.h"
-#include <map>
+#include "graphics/Asteroid.h"
 
 class GameWindow
 {
@@ -28,8 +29,10 @@ class GameWindow
 
 		int bullet_id;
 		int ship_id;
+		int asteroid_id;
 
 		std::map<int,Ship> ships;
+		std::map<int,Asteroid> asteroids;
 		std::map<int,Bullet> bullets;
 		SDL_Thread* client_thread;
 		SDL_Window* window;
